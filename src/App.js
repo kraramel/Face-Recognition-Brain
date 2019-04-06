@@ -26,23 +26,25 @@ const app = new Clarifai.App({
   apiKey: '60edc8be028f41cfae78a11c23f379df'
 });
 
+const initialState = {
+  input: '',
+  imageUrl: '',
+  box: {},
+  route: 'signin',
+  isSignedIn: false,
+  user: {
+    id: '',
+    name: '',
+    email: '',
+    entries: 0,
+    joined: ''
+  }
+}
+
 class App extends Component {
   constructor() {
     super();
-    this.state = {
-      input: '',
-      imageUrl: '',
-      box: {},
-      route: 'signin',
-      isSignedIn: false,
-      user: {
-        id: '',
-        name: '',
-        email: '',
-        entries: 0,
-        joined: ''
-      }
-    }
+    this.state = initialState;
   }
 
   componentDidMount() {
@@ -80,10 +82,10 @@ class App extends Component {
   displayFaceBox = (box) => {
     this.setState({ box: box });
   }
-
   onInputChange = (event) => {
     this.setState({ input: event.target.value });
   }
+
 
   onButtonSubmit = () => {
     this.setState({ imageUrl: this.state.input })
@@ -101,15 +103,17 @@ class App extends Component {
             .then(count => {
               this.setState(Object.assign(this.state.user, { entries: count }))
             })
+            .catch(console.log)
         }
+
         this.displayFaceBox(this.calculateFaceLocation(response))
       })
       .catch(err => console.log(err));
-    console.log()
+
   }
   onRouteChange = (route) => {
     if (route === 'signout') {
-      this.setState({ isSignedIn: false });
+      this.setState(initialState);
     } else if (route === 'home') {
       this.setState({ isSignedIn: true });
     }
